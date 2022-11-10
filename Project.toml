@@ -2,3 +2,6 @@ name = "AntialigningActiveParticles"
 uuid = "a6454ebb-ddf2-4f2f-b85b-40c7938d31c8"
 authors = ["Michael Wang <michael.wang.physics@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
