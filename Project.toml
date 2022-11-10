@@ -1,0 +1,4 @@
+name = "AntialigningActiveParticles"
+uuid = "a6454ebb-ddf2-4f2f-b85b-40c7938d31c8"
+authors = ["Michael Wang <michael.wang.physics@gmail.com>"]
+version = "0.1.0"
