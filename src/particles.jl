@@ -18,7 +18,8 @@ end
 
 function ActiveParticle(type::Symbol, position::Vector{Float64}, speed::Float64, decision_time::Float64; noise::Float64 = 0.0, γ_trans::Float64 = 1.0, R::Float64 = 0.5)
     run_time_remaining = -decision_time * log(rand())
-    return ActiveParticle(position, zeros(2), zeros(2), zeros(2), type, speed, decision_time, run_time_remaining, noise, γ_trans, R)
+    sin, cos = sincos(2 * pi * rand())
+    return ActiveParticle(position, [cos, sin], zeros(2), zeros(2), type, speed, decision_time, run_time_remaining, noise, γ_trans, R)
 end
 
 function group_by_type(particles::Vector{ActiveParticle}, types::Vector{Symbol})
