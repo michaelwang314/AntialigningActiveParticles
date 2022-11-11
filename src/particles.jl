@@ -1,6 +1,3 @@
-export ActiveParticle
-export group_by_type
-
 mutable struct ActiveParticle
     position::MVector{2, Float64}
     director::MVector{2, Float64}

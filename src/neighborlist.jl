@@ -1,6 +1,3 @@
-export LinkedCellList
-export update_neighbor_list!
-
 struct LinkedCellList
     particles::Vector{ActiveParticle}
     start_id::Array{Int64, 2}

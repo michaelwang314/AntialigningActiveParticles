@@ -1,9 +1,3 @@
-export System
-export generate_lattice
-export run_simulation!
-export save_simulation!
-export load_simulation!
-
 mutable struct System
     descriptor::String
     
@@ -91,4 +85,26 @@ function run_simulation!(system::System; num_steps::Int64 = 1, save_interval::In
     println("Average steps/s: ", round(num_steps / time_elapsed, digits = 1))
     println("----------------SIMULATION DONE-----------------")
     println("")
+end
+
+function save_simulation!(system::System; save_as::String = "TEMP.out")
+    if !isdir(dirname(save_as))
+        mkpath(dirname(save_as))
+    end
+
+    println("Saving simulation...")
+    open(save_as, "w") do f
+        serialize(f, system)
+    end
+    println("Simulation saved to ", save_as)
+end
+
+function load_simulation()
+    system = begin
+        open(file, "r") do f
+            deserialize(f)
+        end
+    end
+
+    return system
 end

@@ -1,6 +1,3 @@
-export Brownian
-export update_particles!
-
 mutable struct Brownian
     particles::Vector{ActiveParticle}
 
