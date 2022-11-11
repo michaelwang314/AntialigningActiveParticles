@@ -65,7 +65,7 @@ function run_simulation!(system::System; num_steps::Int64 = 1, save_interval::In
         end
 
         for neighbor_list in system.neighbor_lists
-            if num_steps % neighborlist_list.update_interval == 0
+            if num_steps % neighbor_list.update_interval == 0
                 update_neighbor_list!(neighbor_list)
             end
         end
