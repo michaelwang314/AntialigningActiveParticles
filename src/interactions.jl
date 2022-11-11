@@ -72,9 +72,8 @@ function compute_interaction!(alignment::Alignment; box::Vector{Float64})
                     Δx = Δ - (i + di + 1 != idi ? sign(Δ) : 0.0) * box[1]
                     Δ = y - neighbor.position[2]
                     Δy = Δ - (j + dj + 1 != jdj ? sign(Δ) : 0.0) * box[2]
-                    Δr² = Δx^2 + Δy^2
 
-                    if 0.0 < Δr² < alignment.cutoff^2
+                    if 0.0 < Δx^2 + Δy^2 < alignment.cutoff^2
                         particle.preferred_director[1] += alignment.align * neighbor.director[1]
                         particle.preferred_director[2] += alignment.align * neighbor.director[2]
                     end
