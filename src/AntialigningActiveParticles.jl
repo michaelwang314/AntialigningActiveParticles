@@ -24,4 +24,6 @@ module AntialigningActiveParticles
     include("interactions.jl")
     include("integrators.jl")
     include("system.jl")
+    
+    include("visualize.jl")
 end
