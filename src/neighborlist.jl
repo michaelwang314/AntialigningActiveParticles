@@ -30,20 +30,20 @@ function LinkedCellList(particles::Vector{ActiveParticle}, box::Vector{Float64},
         start_id[i, j] = n
     end
 
-    return CellList(particles, start_id, next_id, num_cells_x, num_cells_y, cell_spacing_x, cell_spacing_y, update_interval)
+    return LinkedCellList(particles, start_id, next_id, num_cells_x, num_cells_y, cell_spacing_x, cell_spacing_y, update_interval)
 end
 
-function update_cell_list!(cell_list::CellList)
-    fill!(cell_list.start_id, -1)
-    fill!(cell_list.next_id, -1)
+function update_neighbor_list!(neighbor_list::LinkedCellList)
+    fill!(neighbor_list.start_id, -1)
+    fill!(neighbor_list.next_id, -1)
 
-    @inbounds for (n, particle) in enumerate(cell_list.particles)
-        i = trunc(Int64, particle.position[1] / cell_list.cell_spacing_x) + 1
-        j = trunc(Int64, particle.position[2] / cell_list.cell_spacing_y) + 1
+    @inbounds for (n, particle) in enumerate(neighbor_list.particles)
+        i = trunc(Int64, particle.position[1] / neighbor_list.cell_spacing_x) + 1
+        j = trunc(Int64, particle.position[2] / neighbor_list.cell_spacing_y) + 1
 
-        if cell_list.start_id[i, j] > 0
-            cell_list.next_id[n] = cell_list.start_id[i, j]
+        if neighbor_list.start_id[i, j] > 0
+            neighbor_list.next_id[n] = neighbor_list.start_id[i, j]
         end
-        cell_list.start_id[i, j] = n
+        neighbor_list.start_id[i, j] = n
     end
 end

@@ -108,3 +108,7 @@ function load_simulation()
 
     return system
 end
+
+function generate_mathematica_data!()
+    
+end
