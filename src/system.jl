@@ -44,8 +44,8 @@ end
 function run_simulation!(system::System; num_steps::Int64 = 1, save_interval::Int64 = -1, message_interval::Float64 = 10.0)
     println("")
     println("---------------SIMULATION STARTED---------------")
-    println("Number of particles: $(length(simulation.particles))")
-    println("Box dimensions: $(round.(simulation.box; digits = 1))")
+    println("Number of particles: $(length(system.particles))")
+    println("Box dimensions: $(round.(system.box; digits = 1))")
     println("Threads available: $(Threads.nthreads())")
 
     prev_step = 0
