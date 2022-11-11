@@ -15,12 +15,12 @@ function System()
     return System("", zeros(2), Vector{ActiveParticle}(), Vector{LinkedCellList}(), Vector{AbstractInteraction}(), Vector{Brownian}(), Vector{Vector{ActiveParticle}}())
 end
 
-function generate_lattice(unit_cell::Vector{Vector{Float64}}, lattice_vector::Vector{Vector{Float64}}, dims::Vector{Vector{Float64}})
-    L_x = lattice_vector[1][1] * dims[1]
-    L_y = lattice_vector[2][2] * dims[2]
+function generate_lattice(unit_cell::Vector{Vector{Float64}}, lattice_vector::Vector{Vector{Float64}}, duplicate::Vector{Int64})
+    L_x = lattice_vector[1][1] * duplicate[1]
+    L_y = lattice_vector[2][2] * duplicate[2]
 
     positions = Vector{Vector{Float64}}()
-    for i = 0 : dims[1] -1, j = 0 : dims[2] - 1
+    for i = 0 : duplicate[1] -1, j = 0 : duplicate[2] - 1
         for position in unit_cell
             x, y = position .+ lattice_vector[1] .* i .+ lattice_vector[2] .* j
 
