@@ -6,7 +6,7 @@ mutable struct System
     particles::Vector{ActiveParticle}
     neighbor_lists::Vector{LinkedCellList}
     interactions::Vector{AbstractInteraction}
-    integrator::Vector{Brownian}
+    integrators::Vector{Brownian}
 
     history::Vector{Vector{ActiveParticle}}
 end
