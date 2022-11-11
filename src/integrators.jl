@@ -28,7 +28,7 @@ function update_particles!(integrator::Brownian; box::Vector{Float64})
             particle.position[1] = mod(particle.position[1], box[1])
         end
         if particle.position[2] < 0.0 || particle.position[2] > box[2]
-            particle.position[2] = mod(particle.positionp[2], box[2])
+            particle.position[2] = mod(particle.position[2], box[2])
         end
 
         fill!(particle.force, 0.0)
