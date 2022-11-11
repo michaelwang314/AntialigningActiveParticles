@@ -24,7 +24,7 @@ function generate_lattice(unit_cell::Vector{Vector{Float64}}, lattice_vector::Ve
         for position in unit_cell
             x, y = position .+ lattice_vector[1] .* i .+ lattice_vector[2] .* j
 
-            push!(postiions, [mod(x, L_x), mod(y, L_y)])
+            push!(positions, [mod(x, L_x), mod(y, L_y)])
         end
     end
 
