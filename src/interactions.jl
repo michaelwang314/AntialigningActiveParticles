@@ -1,4 +1,6 @@
-mutable struct LennardJones
+abstract type AbstractInteraction end
+
+mutable struct LennardJones <: AbstractInteraction
     ϵ::Float64
     σ::Float64
     cutoff::Float64
@@ -7,7 +9,7 @@ mutable struct LennardJones
     neighbor_list::LinkedCellList
 end
 
-mutable struct Alignment
+mutable struct Alignment <: AbstractInteraction
     align::Float64
     cutoff::Float64
 
@@ -15,7 +17,7 @@ mutable struct Alignment
     neighbor_list::LinkedCellList
 end
 
-mutable struct CircularConfinement
+mutable struct CircularConfinement <: AbstractInteraction
     particles::Vector{ActiveParticle}
 
     ϵ::Float64
@@ -24,14 +26,79 @@ mutable struct CircularConfinement
     center::Vector{Float64}
 end
 
-function compute_interaction!(interaction::LennardJones; box::Vector{Float64})
+function compute_interaction!(lennardjones::LennardJones; box::Vector{Float64})
+    @inbounds Threads.@threads for particle in lennardjones.particles
+        x, y = particle.position
+        i = trunc(Int64, x / lennardjones.neighbor_list.cell_spacing_x)
+        j = trunc(Int64, y / lennardjones.neighbor_list.cell_spacing_y)
+        for di = -1 : 1, dj = -1 : 1
+            idi = mod(i + di, lennardjones.neighbor_list.num_cells_x) + 1
+            jdj = mod(j + dj, lennardjones.neighbor_list.num_cells_y) + 1
+            id = lennardjones.neighbor_list.start_id[idi, jdj]
+            while id > 0
+                neighbor = lennardjones.neighbor_list.particles[id]
+                Δ = x - neighbor.position[1]
+                Δx = Δ - (i + di + 1 != idi ? sign(Δ) : 0.0) * box[1]
+                Δ = y - neighbor.position[2]
+                Δy = Δ - (j + dj + 1 != jdj ? sign(Δ) : 0.0) * box[2]
+                Δr² = Δx^2 + Δy^2
 
+                if 0.0 < Δr² < lennardjones.cutoff^2
+                    val = (lennardjones.σ^2 / Δr²)^3
+                    coef = lennardjones.ϵ * (48.0 * val - 24.0) * val / Δr²
+
+                    particle.force[1] += coef * Δx
+                    particle.force[2] += coef * Δy
+                end
+                id = lennardjones.neighbor_list.next_id[id]
+            end
+        end
+    end
 end
 
-function compute_interaction!(interaction::Alignment; box::Vector{Float64})
+function compute_interaction!(alignment::Alignment; box::Vector{Float64})
+    @inbounds Threads.@threads for particle in alignment.particles
+        if particle.run_time_remaining <= 0.0
+            x, y = particle.position
+            i = trunc(Int64, x / alignment.neighbor_list.cell_spacing_x) + 1
+            j = trunc(Int64, y / alignment.neighbor_list.cell_spacing_y) + 1
+            for di = -1 : 1, dj = -1 : 1
+                idi = mod(i + di, alignment.neighbor_list.num_cells_x) + 1
+                jdj = mod(j + dj, alignment.neighbor_list.num_cells_y) + 1
+                id = alignment.neighbor_list.start_id[idi, jdj]
+                while id > 0
+                    neighbor = alignment.neighbor_list.particles[id]
+                    Δ = x - neighbor.position[1]
+                    Δx = Δ - (i + di + 1 != idi ? sign(Δ) : 0.0) * box[1]
+                    Δ = y - neighbor.position[2]
+                    Δy = Δ - (j + dj + 1 != jdj ? sign(Δ) : 0.0) * box[2]
+                    Δr² = Δx^2 + Δy^2
 
+                    if 0.0 < Δr² < alignment.cutoff^2
+                        particle.preferred_director[1] += align * neighbor.director[1]
+                        particle.preferred_director[2] += align * neighbor.director[2]
+                    end
+                    id = alignment.neighbor_list.next_id[id]
+                end
+            end
+        end
+    end
 end
 
-function compute_interaction!(interaction::CircularConfinement; args...)
-    
+function compute_interaction!(circularconfinement::CircularConfinement; args...)
+    @inbounds Threads.@threads for particle in circularconfinement.particles
+        rx = particle.position[1] - circularconfinement.center[1]
+        ry = particle.position[2] - circularconfinement.center[2]
+        r² = rx^2 + ry^2
+
+        if (circularconfinement.radius - circularconfinement.σ)^2 < r²
+            r = sqrt(r²)
+            Δr² = (circularconfinement.radius - r)^2
+            val = (circularconfinement.σ^2 / Δr²)^3
+            coef = circularconfinement.ϵ * (48.0 * val - 24.0) * val / Δr²
+
+            particle.force[1] += coef * (-rx / r)
+            particle.force[2] += coef * (-ry / r)
+        end
+    end
 end
