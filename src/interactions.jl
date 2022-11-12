@@ -24,6 +24,7 @@ mutable struct CircularConfinement <: AbstractInteraction
     σ::Float64
     radius::Float64
     center::Vector{Float64}
+    side::Symbol
 end
 
 function compute_interaction!(lennardjones::LennardJones; box::Vector{Float64})
@@ -85,19 +86,20 @@ function compute_interaction!(alignment::Alignment; box::Vector{Float64})
 end
 
 function compute_interaction!(circularconfinement::CircularConfinement; args...)
+    side = circularconfinement.side == :in ? 1.0 : -1.0
     @inbounds Threads.@threads for particle in circularconfinement.particles
         rx = particle.position[1] - circularconfinement.center[1]
         ry = particle.position[2] - circularconfinement.center[2]
         r² = rx^2 + ry^2
 
-        if (circularconfinement.radius - circularconfinement.σ)^2 < r²
+        if side * ((circularconfinement.radius - side * circularconfinement.σ)^2 - r²) < 0
             r = sqrt(r²)
             Δr² = (circularconfinement.radius - r)^2
             val = (circularconfinement.σ^2 / Δr²)^3
             coef = circularconfinement.ϵ * (48.0 * val - 24.0) * val / Δr²
 
-            particle.force[1] += coef * (-rx / r)
-            particle.force[2] += coef * (-ry / r)
+            particle.force[1] += coef * (-rx / r) * side
+            particle.force[2] += coef * (-ry / r) * side
         end
     end
 end
