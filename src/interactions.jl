@@ -60,8 +60,8 @@ function compute_interaction!(alignment::Alignment; box::Vector{Float64})
     @inbounds Threads.@threads for particle in alignment.particles
         if particle.run_time_remaining <= 0.0
             x, y = particle.position
-            i = trunc(Int64, x / alignment.neighbor_list.cell_spacing_x) + 1
-            j = trunc(Int64, y / alignment.neighbor_list.cell_spacing_y) + 1
+            i = trunc(Int64, x / alignment.neighbor_list.cell_spacing_x)
+            j = trunc(Int64, y / alignment.neighbor_list.cell_spacing_y)
             for di = -1 : 1, dj = -1 : 1
                 idi = mod(i + di, alignment.neighbor_list.num_cells_x) + 1
                 jdj = mod(j + dj, alignment.neighbor_list.num_cells_y) + 1

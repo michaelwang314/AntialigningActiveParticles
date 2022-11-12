@@ -20,7 +20,7 @@ function generate_lattice(unit_cell::Vector{Vector{Float64}}, lattice_vector::Ve
     L_y = lattice_vector[2][2] * duplicate[2]
 
     positions = Vector{Vector{Float64}}()
-    for i = 0 : duplicate[1] -1, j = 0 : duplicate[2] - 1
+    for i = 0 : duplicate[1] - 1, j = 0 : duplicate[2] - 1
         for position in unit_cell
             x, y = position .+ lattice_vector[1] .* i .+ lattice_vector[2] .* j
 
