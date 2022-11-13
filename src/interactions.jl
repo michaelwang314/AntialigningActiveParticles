@@ -96,10 +96,10 @@ function compute_interaction!(circularconfinement::CircularConfinement; args...)
             r = sqrt(r²)
             Δr² = (circularconfinement.radius - r)^2
             val = (circularconfinement.σ^2 / Δr²)^3
-            coef = circularconfinement.ϵ * (48.0 * val - 24.0) * val / Δr²
+            coef = circularconfinement.ϵ * (48.0 * val - 24.0) * val / sqrt(Δr²) * (-side / r)
 
-            particle.force[1] += coef * (-rx / r) * side
-            particle.force[2] += coef * (-ry / r) * side
+            particle.force[1] += coef * rx
+            particle.force[2] += coef * ry
         end
     end
 end
