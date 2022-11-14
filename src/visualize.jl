@@ -24,7 +24,7 @@ function visualize!(system::System; save_as::String = "TEMP/TEMP.gif", fps::Int6
             unit_circle = [cos.(θ), sin.(θ)]
             for particle in system.history[frame_num]
                 xs, ys = particle.R .* unit_circle[1] .+ particle.position[1], particle.R .* unit_circle[2] .+ particle.position[2]
-                plot!(xs, ys, seriestype = [:shape,], color = :red, fillalpha = 0.3)
+                plot!(xs, ys, seriestype = [:shape,], color = :red, linecolor = :red, fillalpha = 0.3)
             end
         else
             prev_frame_num = frame_nums[f - 1]
