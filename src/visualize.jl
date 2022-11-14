@@ -3,7 +3,8 @@ using Plots
 export visualize!
 
 function degrees(director::V) where V <: AbstractVector
-    return (atan(director[2], director[1]) + pi) * 180 / pi
+    θ = atan(director[2], director[1])
+    return (θ + (θ < 0.0 ? 2 * pi : 0.0)) * 180 / pi
 end
 
 function visualize!(system::System; save_as::String = "TEMP/TEMP.gif", fps::Int64 = 10, frame_nums::Vector{Int64} = Int64[], colors::Symbol = :wheel)
