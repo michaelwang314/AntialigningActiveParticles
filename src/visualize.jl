@@ -2,7 +2,11 @@ using Plots
 
 export visualize!
 
-function visualize!(system::System; save_as::String = "TEMP/TEMP.gif", fps::Int64 = 10, frame_nums::Vector{Int64} = Int64[])
+function degrees(director::V) where V <: AbstractVector
+    return (atan(director[2], director[1]) + pi) * 180 / pi
+end
+
+function visualize!(system::System; save_as::String = "TEMP/TEMP.gif", fps::Int64 = 10, frame_nums::Vector{Int64} = Int64[], colors::Symbol = :wheel)
     if !isdir(dirname(save_as))
         mkpath(dirname(save_as))
     end
@@ -20,11 +24,18 @@ function visualize!(system::System; save_as::String = "TEMP/TEMP.gif", fps::Int6
     scene = plot(size = (600, 600), legend = false, axis = false, grid = false, aspect_ratio = 1, xlim = xlim, ylim = ylim)
     for (f, frame_num) = enumerate(frame_nums)
         if f == 1
-            θ = LinRange(0.0, 2 * pi, 20)
-            unit_circle = [cos.(θ), sin.(θ)]
+            unit_circle = [cos.(LinRange(0.0, 2 * pi, 20)), sin.(LinRange(0.0, 2 * pi, 20))]
             for particle in system.history[frame_num]
                 xs, ys = particle.R .* unit_circle[1] .+ particle.position[1], particle.R .* unit_circle[2] .+ particle.position[2]
-                plot!(xs, ys, seriestype = [:shape,], color = :red, linecolor = :red, fillalpha = 0.3)
+                
+                if colors == :wheel
+                    θ = degrees(particle.director)
+                    color = RGB(HSV(θ, 1.0, 1.0))
+                else
+                    color = :black
+                end
+                
+                plot!(xs, ys, seriestype = [:shape,], fillcolor = color, linecolor = color)
             end
         else
             prev_frame_num = frame_nums[f - 1]
@@ -33,6 +44,15 @@ function visualize!(system::System; save_as::String = "TEMP/TEMP.gif", fps::Int6
                 Δx, Δy = particle.position[1] - prev_particle.position[1], particle.position[2] - prev_particle.position[2]
                 scene.series_list[n][:x] .+= Δx
                 scene.series_list[n][:y] .+= Δy
+
+                if colors == :wheel
+                    θ = degrees(particle.director)
+                    color = RGB(HSV(θ, 1.0, 1.0))
+                else
+                    color = :black
+                end
+                scene.series_list[n][:fillcolor] = color
+                scene.series_list[n][:linecolor] = color
             end
         end
 
