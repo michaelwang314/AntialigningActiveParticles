@@ -27,6 +27,15 @@ mutable struct CircularConfinement <: AbstractInteraction
     side::Symbol
 end
 
+mutable struct ChannelConfinement <: AbstractInteraction
+    particles::Vector{ActiveParticle}
+
+    ϵ::Float64
+    σ::Float64
+    width::Float64
+    center_x::Float64
+end
+
 function compute_interaction!(lennardjones::LennardJones; box::Vector{Float64})
     @inbounds Threads.@threads for particle in lennardjones.particles
         x, y = particle.position
@@ -100,6 +109,20 @@ function compute_interaction!(circularconfinement::CircularConfinement; args...)
 
             particle.force[1] += coef * rx
             particle.force[2] += coef * ry
+        end
+    end
+end
+
+function compute_interaction!(channelconfinement::ChannelConfinement; args...)
+    @inbounds Threads.@threads for particle in channelconfinement.particles
+        rx = particle.position[1] - channelconfinement.center_x
+        
+        if (channelconfinement.width / 2 - channelconfinement.σ)^2 < rx^2
+            Δr² = (channelconfinement.width / 2 - rx)^2
+            val = (channelconfinement.σ^2 / Δr²)^3
+            coef = channelconfinement.ϵ * (48.0 * val - 24.0) * val / sqrt(Δr²)
+
+            particle.force[1] += coef * sign(-rx)
         end
     end
 end
