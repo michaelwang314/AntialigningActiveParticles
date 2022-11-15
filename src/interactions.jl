@@ -118,7 +118,7 @@ function compute_interaction!(channelconfinement::ChannelConfinement; args...)
         rx = particle.position[1] - channelconfinement.center_x
         
         if (channelconfinement.width / 2 - channelconfinement.σ)^2 < rx^2
-            Δr² = (channelconfinement.width / 2 - rx)^2
+            Δr² = (channelconfinement.width / 2 - abs(rx))^2
             val = (channelconfinement.σ^2 / Δr²)^3
             coef = channelconfinement.ϵ * (48.0 * val - 24.0) * val / sqrt(Δr²)
 
