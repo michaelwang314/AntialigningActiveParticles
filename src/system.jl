@@ -41,7 +41,7 @@ end
                   seconds < 10 ? ":0" : ":", seconds)
 end
 
-function run_simulation!(system::System; num_steps::Int64 = 1, save_interval::Int64 = -1, message_interval::Float64 = 10.0)
+function run_simulation!(system::System; num_steps::Int64 = 1, save_start::Int64 = 1, save_interval::Int64 = -1, message_interval::Float64 = 10.0)
     println("")
     println("---------------SIMULATION STARTED---------------")
     println("Number of particles: $(length(system.particles))")
@@ -56,7 +56,7 @@ function run_simulation!(system::System; num_steps::Int64 = 1, save_interval::In
             compute_interaction!(interaction; box = system.box)
         end
 
-        if step % save_interval == 0 && save_interval > 0
+        if step >= save_start && save_interval > 0 && (step - save_start) % save_interval == 0
             push!(system.history, deepcopy(system.particles))
         end
 
