@@ -10,7 +10,7 @@ mutable struct LennardJones <: AbstractInteraction
 end
 
 mutable struct Alignment <: AbstractInteraction
-    align::Float64
+    angle::Float64
     cutoff::Float64
 
     particles::Vector{ActiveParticle}
@@ -84,8 +84,11 @@ function compute_interaction!(alignment::Alignment; box::Vector{Float64})
                     Δy = Δ - (j + dj + 1 != jdj ? sign(Δ) : 0.0) * box[2]
 
                     if 0.0 < Δx^2 + Δy^2 < alignment.cutoff^2
-                        particle.preferred_director[1] += alignment.align * neighbor.director[1]
-                        particle.preferred_director[2] += alignment.align * neighbor.director[2]
+                        ndirx, ndiry = neighbor.director
+                        pdirx, pdiry = particle.director
+                        sin, cos = sincos(sign(ndirx * pdiry - pdirx * ndiry) * alignment.angle)
+                        particle.preferred_director[1] += cos * ndirx - sin * ndiry
+                        particle.preferred_director[2] += sin * ndirx + cos * ndiry
                     end
                     id = alignment.neighbor_list.next_id[id]
                 end
