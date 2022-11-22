@@ -48,9 +48,9 @@ function compute_interaction!(lennardjones::LennardJones; box::Vector{Float64})
             while id > 0
                 neighbor = lennardjones.neighbor_list.particles[id]
                 Δ = x - neighbor.position[1]
-                Δx = Δ - (i + di + 1 != idi ? sign(Δ) : 0.0) * box[1]
+                Δx = Δ - (i + di + 1 != idi ? sign(Δ) * box[1] : 0.0)
                 Δ = y - neighbor.position[2]
-                Δy = Δ - (j + dj + 1 != jdj ? sign(Δ) : 0.0) * box[2]
+                Δy = Δ - (j + dj + 1 != jdj ? sign(Δ) * box[2] : 0.0)
                 Δr² = Δx^2 + Δy^2
 
                 if 0.0 < Δr² < lennardjones.cutoff^2
@@ -79,14 +79,14 @@ function compute_interaction!(alignment::Alignment; box::Vector{Float64})
                 while id > 0
                     neighbor = alignment.neighbor_list.particles[id]
                     Δ = x - neighbor.position[1]
-                    Δx = Δ - (i + di + 1 != idi ? sign(Δ) : 0.0) * box[1]
+                    Δx = Δ - (i + di + 1 != idi ? sign(Δ) * box[1] : 0.0)
                     Δ = y - neighbor.position[2]
-                    Δy = Δ - (j + dj + 1 != jdj ? sign(Δ) : 0.0) * box[2]
+                    Δy = Δ - (j + dj + 1 != jdj ? sign(Δ) * box[2] : 0.0)
 
                     if 0.0 < Δx^2 + Δy^2 < alignment.cutoff^2
                         ndirx, ndiry = neighbor.director
                         pdirx, pdiry = particle.director
-                        sin, cos = sincos(sign(ndirx * pdirx + ndiry * pdiry) * sign(Δx * pdiry - pdirx * Δy) * alignment.angle)
+                        sin, cos = sincos(sign((ndirx * pdirx + ndiry * pdiry) * (Δx * pdiry - pdirx * Δy)) * alignment.angle)
                         particle.preferred_director[1] += cos * ndirx - sin * ndiry
                         particle.preferred_director[2] += sin * ndirx + cos * ndiry
                     end

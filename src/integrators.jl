@@ -10,11 +10,15 @@ function update_particles!(integrator::Brownian; box::Vector{Float64})
             norm² = particle.preferred_director[1]^2 + particle.preferred_director[2]^2
             if norm² > 0.0
                 norm = sqrt(norm²)
-                sin, cos = sincos(particle.noise * randn())
                 dir_x, dir_y = particle.preferred_director[1] / norm, particle.preferred_director[2] / norm
-
-                particle.director[1] = cos * dir_x - sin * dir_y
-                particle.director[2] = sin * dir_x + cos * dir_y
+                if particle.noise > 0.0
+                    sin, cos = sincos(particle.noise * randn())
+                    particle.director[1] = cos * dir_x - sin * dir_y
+                    particle.director[2] = sin * dir_x + cos * dir_y
+                else
+                    particle.director[1] = dir_x
+                    particle.director[2] = dir_y
+                end
             else
                 particle.director[2], particle.director[1] = sincos(2 * pi * rand())
             end
