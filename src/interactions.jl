@@ -86,7 +86,7 @@ function compute_interaction!(alignment::Alignment; box::Vector{Float64})
                     if 0.0 < Δx^2 + Δy^2 < alignment.cutoff^2
                         ndirx, ndiry = neighbor.director
                         pdirx, pdiry = particle.director
-                        sin, cos = sincos(sign(Δx * pdiry - pdirx * Δy) * alignment.angle)
+                        sin, cos = sincos(sign(ndirx * pdirx + ndiry * pdirxy) * sign(Δx * pdiry - pdirx * Δy) * alignment.angle)
                         particle.preferred_director[1] += cos * ndirx - sin * ndiry
                         particle.preferred_director[2] += sin * ndirx + cos * ndiry
                     end
