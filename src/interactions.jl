@@ -33,7 +33,7 @@ mutable struct ChannelConfinement <: AbstractInteraction
     ϵ::Float64
     σ::Float64
     width::Float64
-    center_x::Float64
+    center_y::Float64
 end
 
 mutable struct Gravity <: AbstractInteraction
