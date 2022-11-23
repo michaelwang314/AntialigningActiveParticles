@@ -7,7 +7,7 @@ module AntialigningActiveParticles
     export LinkedCellList
     export AbstractInteraction, LennardJones, Alignment, CircularConfinement, ChannelConfinement
     export Brownian
-    export System, generate_lattice, run_simulation!, save_simulation!, load_simulation!, generate_mathematica_data!
+    export System, generate_lattice, run_simulation!, save_simulation!, load_simulation, generate_mathematica_data!
 
 
     """
