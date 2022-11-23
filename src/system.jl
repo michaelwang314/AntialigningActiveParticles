@@ -99,7 +99,7 @@ function save_simulation!(system::System; save_as::String = "TEMP.out")
     println("Simulation saved to ", save_as)
 end
 
-function load_simulation()
+function load_simulation(file::String)
     system = begin
         open(file, "r") do f
             deserialize(f)
