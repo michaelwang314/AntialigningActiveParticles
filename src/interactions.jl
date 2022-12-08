@@ -42,6 +42,21 @@ mutable struct Gravity <: AbstractInteraction
     mg::Float64
 end
 
+mutable struct Harmonic <: AbstractInteraction
+    k::Float64
+    l0::Float64
+    
+    particles::Vector{ActiveParticle}
+    neighbors::Vector{ActiveParticle}
+end
+
+mutable struct HarmonicAngle <: AbstractInteraction
+    k::Float64
+    θ0::Float64
+
+    particles::Vector{Float64}
+end
+
 function compute_interaction!(lennardjones::LennardJones; box::Vector{Float64})
     @inbounds Threads.@threads for particle in lennardjones.particles
         x, y = particle.position
@@ -140,4 +155,8 @@ function compute_interaction!(gravity::Gravity; args...)
     @inbounds Threads.@threads for particle in gravity.particles
         particle.force[2] -= gravity.mg
     end
+end
+
+function compute_interaction!(harmonic::Harmonic; box::Vector{Float64})
+
 end
