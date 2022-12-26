@@ -109,6 +109,22 @@ function load_simulation(file::String)
     return system
 end
 
-function generate_mathematica_data!()
-    
+function generate_mathematica_data!(system::System; save_as::String = "TEMP_mathematica.txt")
+    data_str = "{"
+
+    for particles in system.history
+        particles_info = "{"
+        for particle in particles
+            x, y = particle.position
+            nx, ny = particle.director
+            particles_info *= "{{$x,$y},{$nx,$ny}},"
+        end
+        particles_info = chop(particles_info) * "}"
+        data_str *= particles_info * ","
+    end
+    data_str = chop(data_str) * "}"
+
+    open(save_as, "w") do f
+        write(f, data_str)
+    end
 end
