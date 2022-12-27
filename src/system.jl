@@ -127,4 +127,6 @@ function generate_mathematica_data!(system::System; save_as::String = "TEMP_math
     open(save_as, "w") do f
         write(f, data_str)
     end
+
+    println("Data ready for import to mathematica!")
 end
