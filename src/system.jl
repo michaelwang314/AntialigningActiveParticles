@@ -122,7 +122,7 @@ function generate_mathematica_data!(system::System; save_as::String = "TEMP_math
         particles_info = chop(particles_info) * "}"
         data_str *= particles_info * ","
     end
-    data_str = chop(data_str) * "}"
+    data_str = replace(chop(data_str) * "}", "e" => "*^")
 
     open(save_as, "w") do f
         write(f, data_str)
