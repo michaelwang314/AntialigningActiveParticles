@@ -115,8 +115,8 @@ function generate_mathematica_data!(system::System; save_as::String = "TEMP_math
     for particles in system.history
         particles_info = "{"
         for particle in particles
-            x, y = particle.position
-            nx, ny = particle.director
+            x, y = round.(particle.position; digits = 2)
+            nx, ny = round.(particle.director; digits = 2)
             particles_info *= "{{$x,$y},{$nx,$ny}},"
         end
         particles_info = chop(particles_info) * "}"
